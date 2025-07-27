@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
-//hello
+
 /**
  * B+Tree Structure
  * Key - StudentId
@@ -29,7 +29,22 @@ class BTree {
          * Return recordID for the given StudentID.
          * Otherwise, print out a message that the given studentId has not been found in the table and return -1.
          */
-        return -1;
+        return search(root, studentId);
+    }
+
+    private long search(BTreeNode node, long studentId){
+        int i = 0;
+        while(i < node.n && studentId > node.keys[i]){
+            i++;
+        }
+        if(node.leaf){
+            if(i < node.n && node.keys[i] == studentId){
+                return node.values[i];
+            }
+            System.out.println("Provided student ID: " + studentId + " was not found in the table.");
+            return -1;
+        }
+        return search(node.children[i], studentId);
     }
 
     BTree insert(Student student) {

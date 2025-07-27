@@ -3,12 +3,12 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Random;
 
 /**
  * Main Application.
  */
 public class BTreeMain {
-
     public static void main(String[] args) {
 
         /** Read the input file -- input.txt */
@@ -52,8 +52,14 @@ public class BTreeMain {
                             /** TODO: Write a logic to generate recordID if it is not provided
                              *        If it is provided, use the provided value
                             */
-                            long recordID = ;
-
+                            String recordIDstring = s2.next();
+                            long recordID;
+                            if(recordIDstring.equals("") || recordIDstring.isEmpty()){
+                                recordID = generateRandomID();
+                            }
+                            else{
+                                recordID = Long.parseLong(recordIDstring);
+                            }
                             Student s = new Student(studentId, age, studentName, major, level, recordID);
                             bTree.insert(s);
 
@@ -102,6 +108,29 @@ public class BTreeMain {
          */
 
         List<Student> studentList = new ArrayList<>();
+        try(Scanner fileScanner = new Scanner(new File("src/Students.csv"))){
+            while(fileScanner.hasNextLine()){
+                String line = fileScanner.nextLine();
+                String[] tokens = line.split(",");
+                if(tokens.length == 6){
+                    long studentID = Long.parseLong(tokens[0]);
+                    String studentName = tokens[1];
+                    String major = tokens[2];
+                    String level = tokens[3];
+                    int age = tokens[4];
+                    long recordID = Long.parseLong(tokens[5]);
+                    if(tokens[5].equals("")){
+                        recordID = generateRandomID();
+                    }
+                    Student student = new Student(studentID, age, studentName, major, level, recordID);
+                    studentList.add(student);
+                }
+            }
+        }
         return studentList;
+    }
+
+    private static Long generateRandomID(){
+        return new Random().nextLong(Integer.MAX_VALUE);
     }
 }
