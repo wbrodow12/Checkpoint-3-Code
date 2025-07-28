@@ -54,7 +54,7 @@ public class BTreeMain {
                             */
                             String recordIDstring = s2.next();
                             long recordID;
-                            if(recordIDstring.equals("") || recordIDstring.isEmpty()){
+                            if(recordIDstring.isEmpty()){
                                 recordID = generateRandomID();
                             }
                             else{
@@ -117,10 +117,12 @@ public class BTreeMain {
                     String studentName = tokens[1];
                     String major = tokens[2];
                     String level = tokens[3];
-                    int age = tokens[4];
-                    long recordID = Long.parseLong(tokens[5]);
-                    if(tokens[5].equals("")){
+                    int age = Integer.parseInt(tokens[4]);
+                    long recordID;
+                    if(tokens[5].isEmpty()){
                         recordID = generateRandomID();
+                    } else{
+                        recordID = Long.parseLong(tokens[5]);
                     }
                     Student student = new Student(studentID, age, studentName, major, level, recordID);
                     studentList.add(student);

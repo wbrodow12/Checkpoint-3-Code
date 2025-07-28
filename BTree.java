@@ -67,15 +67,13 @@ class BTree {
             root.values[0] = recordId;
             root.n = 1;
         } else {
-            if (root.n == 2 * t) {
+            if (root.n == 2 * t - 1) {
                 BTreeNode newRoot = new BTreeNode(t, false);
                 newRoot.children[0] = root;
                 splitChild(newRoot, 0);
-                insertNonFull(newRoot, key, recordId);
                 root = newRoot;
-            } else {
-                insertNonFull(root, key, recordId);
-            }
+            } 
+            insertNonFull(root, key, recordId);
         }
 
         return this;
@@ -98,9 +96,9 @@ class BTree {
                 i--;
             }
             i++;
-            if (node.children[i].n == 2 * t) {
+            if (node.children[i].n == 2 * t - 1) {
                 splitChild(node, i);
-                if (key > node.keys[i]) {
+                if (key >= node.keys[i]) {
                     i++;
                 }
             }
@@ -111,38 +109,46 @@ class BTree {
     private void splitChild(BTreeNode parent, int index) {
         BTreeNode fullChild = parent.children[index];
         BTreeNode newChild = new BTreeNode(t, fullChild.leaf);
-        newChild.n = t;
 
-        // Copy last t keys from fullChild to newChild
-        for (int j = 0; j < t; j++) {
-            newChild.keys[j] = fullChild.keys[j + t];
-            if (fullChild.leaf) {
-                newChild.values[j] = fullChild.values[j + t];
-            }
-        }
-
-        if (!fullChild.leaf) {
-            for (int j = 0; j < t + 1; j++) {
-                newChild.children[j] = fullChild.children[j + t];
-            }
-        }
-
-        fullChild.n = t;
-
-        // Insert newChild into parent
-        for (int j = parent.n; j > index; j--) {
-            parent.children[j + 1] = parent.children[j];
-            parent.keys[j] = parent.keys[j - 1];
-        }
-
-        parent.children[index + 1] = newChild;
-        parent.keys[index] = fullChild.leaf ? newChild.keys[0] : fullChild.keys[t - 1];
-        parent.n++;
-
-        // Handle leaf node next pointer
         if (fullChild.leaf) {
+            for (int j = 0; j < t; j++) {
+                newChild.keys[j] = fullChild.keys[j + t - 1];
+                newChild.values[j] = fullChild.values[j + t - 1];
+            }
+            newChild.n = t;
+            fullChild.n = t - 1;
+
+            // Link leaf nodes
             newChild.next = fullChild.next;
             fullChild.next = newChild;
+
+            // Push key up to parent
+            for (int j = parent.n; j > index; j--) {
+                parent.children[j + 1] = parent.children[j];
+                parent.keys[j] = parent.keys[j - 1];
+            }
+            parent.children[index + 1] = newChild;
+            parent.keys[index] = newChild.keys[0];
+            parent.n++;
+
+        } else {
+            for (int j = 0; j < t - 1; j++) {
+                newChild.keys[j] = fullChild.keys[j + t];
+            }
+            for (int j = 0; j < t; j++) {
+                newChild.children[j] = fullChild.children[j + t];
+            }
+            newChild.n = t - 1;
+            fullChild.n = t - 1;
+
+            // Promote middle key
+            for (int j = parent.n; j > index; j--) {
+                parent.children[j + 1] = parent.children[j];
+                parent.keys[j] = parent.keys[j - 1];
+            }
+            parent.children[index + 1] = newChild;
+            parent.keys[index] = fullChild.keys[t - 1];
+            parent.n++;
         }
     }
 
