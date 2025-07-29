@@ -5,14 +5,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Random;
 
-
-
-/**
- * Main Application.
- */
 public class BTreeMain {
 
-    // MLB Move path out of logic + switch to relative windows path.
     // TODO: change when implementing on Linux CSL Machines
     public static final String pathName = "Checkpoint-3-Code\\input.txt";
 
@@ -23,9 +17,7 @@ public class BTreeMain {
         try {
             scan = new Scanner(new File(pathName));
         } catch (FileNotFoundException e) {
-            System.out.println("File not found.");
-
-            // MLB exit if file wasn't found
+            System.out.println("File not found. Exiting.");
             return;
         }
 
@@ -114,11 +106,11 @@ public class BTreeMain {
 
         /** TODO:
          * Extract the students information from "Students.csv"
-         * return the list<Students>
+         * return the list<Student>
          */
-
         List<Student> studentList = new ArrayList<>();
-        try(Scanner fileScanner = new Scanner(new File("src/Students.csv"))){
+        
+        try(Scanner fileScanner = new Scanner(new File("Checkpoint-3-Code\\Student.csv"))){
             while(fileScanner.hasNextLine()){
                 String line = fileScanner.nextLine();
                 String[] tokens = line.split(",");
