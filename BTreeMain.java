@@ -111,21 +111,27 @@ public class BTreeMain {
         List<Student> studentList = new ArrayList<>();
         
         try(Scanner fileScanner = new Scanner(new File("Checkpoint-3-Code\\Student.csv"))){
+
             while(fileScanner.hasNextLine()){
+
                 String line = fileScanner.nextLine();
                 String[] tokens = line.split(",");
+
                 if(tokens.length == 6){
+
                     long studentID = Long.parseLong(tokens[0]);
                     String studentName = tokens[1];
                     String major = tokens[2];
                     String level = tokens[3];
                     int age = Integer.parseInt(tokens[4]);
                     long recordID;
+
                     if(tokens[5].isEmpty()){
                         recordID = generateRandomID();
-                    } else{
+                    } else {
                         recordID = Long.parseLong(tokens[5]);
-                    }
+                        }
+
                     Student student = new Student(studentID, age, studentName, major, level, recordID);
                     studentList.add(student);
                 }
