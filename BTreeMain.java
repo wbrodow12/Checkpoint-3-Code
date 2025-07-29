@@ -5,18 +5,28 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Random;
 
+
+
 /**
  * Main Application.
  */
 public class BTreeMain {
+
+    // MLB Move path out of logic + switch to relative windows path.
+    // TODO: change when implementing on Linux CSL Machines
+    public static final String pathName = "Checkpoint-3-Code\\input.txt";
+
     public static void main(String[] args) {
 
         /** Read the input file -- input.txt */
         Scanner scan = null;
         try {
-            scan = new Scanner(new File("src/input.txt"));
+            scan = new Scanner(new File(pathName));
         } catch (FileNotFoundException e) {
             System.out.println("File not found.");
+
+            // MLB exit if file wasn't found
+            return;
         }
 
         /** Read the minimum degree of B+Tree first */
@@ -128,7 +138,10 @@ public class BTreeMain {
                     studentList.add(student);
                 }
             }
+        }catch (Exception e) {
+            // TODO: handle exception
         }
+        
         return studentList;
     }
 
