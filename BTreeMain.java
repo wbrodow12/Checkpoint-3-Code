@@ -8,7 +8,7 @@ import java.util.Random;
 public class BTreeMain {
 
     // TODO: change when implementing on Linux CSL Machines
-    public static final String pathName = "Checkpoint-3-Code\\input.txt";
+    public static final String pathName = "input.txt";
 
     public static void main(String[] args) {
 
@@ -54,7 +54,10 @@ public class BTreeMain {
                             /** TODO: Write a logic to generate recordID if it is not provided
                              *        If it is provided, use the provided value
                             */
-                            String recordIDstring = s2.next();
+                            String recordIDstring = "";
+                            if (s2.hasNext()) {
+                                recordIDstring = s2.next();
+                            }
                             long recordID;
                             if(recordIDstring.isEmpty()){
                                 recordID = generateRandomID();
@@ -90,6 +93,7 @@ public class BTreeMain {
                             List<Long> listOfRecordID = new ArrayList<>();
                             listOfRecordID = bTree.print();
                             System.out.println("List of recordIDs in B+Tree " + listOfRecordID.toString());
+                            break;
                         }
                         default:
                             System.out.println("Wrong Operation");
@@ -105,13 +109,12 @@ public class BTreeMain {
     private static List<Student> getStudents() {
 
         /** TODO:
-         * Extract the students information from "Students.csv"
+         * Extract the students information from "Student.csv"
          * return the list<Student>
          */
         List<Student> studentList = new ArrayList<>();
         
-        try(Scanner fileScanner = new Scanner(new File("Checkpoint-3-Code\\Student.csv"))){
-
+        try(Scanner fileScanner = new Scanner(new File("Student.csv"))){
             while(fileScanner.hasNextLine()){
 
                 String line = fileScanner.nextLine();

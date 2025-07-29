@@ -1,6 +1,10 @@
 3
 insert 320874982 Jack Ryan Law FR 18 24
-delete 115987938
 search 320874982
 search 455798411
+search 51135593
 insert 321114982 Michael Scott Management RR 21 25
+search 321114982
+insert 211334532 Jim Brown Engineering FR 19
+search 211334532
+print

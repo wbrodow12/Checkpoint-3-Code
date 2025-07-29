@@ -167,12 +167,21 @@ class BTree {
 
         List<Long> listOfRecordID = new ArrayList<>();
 
-        /**
-         * TODO:
-         * Implement this function to print the B+Tree.
-         * Return a list of recordIDs from left to right of leaf nodes.
-         * MJM Test Push
-         */
+        BTreeNode current = root;
+        if (current == null) {
+            return listOfRecordID;
+        }
+        while (!current.leaf) {
+            current = current.children[0];
+        }
+
+        while (current != null) {
+            for (int i = 0; i < current.n; i++) {
+                listOfRecordID.add(current.values[i]);
+            }
+            current = current.next;
+        }
+
         return listOfRecordID;
     }
 }
