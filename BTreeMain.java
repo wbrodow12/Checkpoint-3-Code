@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -143,6 +144,12 @@ public class BTreeMain {
             // TODO: handle exception
         }
         
+        try(FileWriter fw = new FileWriter("Student.csv",false)){
+            fw.write("");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
         return studentList;
     }
 
