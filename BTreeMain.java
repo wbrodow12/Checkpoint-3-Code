@@ -52,7 +52,7 @@ public class BTreeMain {
                             String major = s2.next();
                             String level = s2.next();
                             int age = Integer.parseInt(s2.next());
-                            /** TODO: Write a logic to generate recordID if it is not provided
+                            /** DONE: Write a logic to generate recordID if it is not provided
                              *        If it is provided, use the provided value
                             */
                             String recordIDstring = "";
@@ -141,7 +141,8 @@ public class BTreeMain {
                 }
             }
         }catch (Exception e) {
-            // TODO: handle exception
+            System.out.println("Error reading Student.csv: " + e.getMessage());
+            return studentList; // Return empty list if there's an error
         }
         
         try(FileWriter fw = new FileWriter("Student.csv",false)){
