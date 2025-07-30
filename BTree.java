@@ -1,3 +1,4 @@
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,6 +75,14 @@ class BTree {
                 root = newRoot;
             } 
             insertNonFull(root, key, recordId);
+        }
+
+        try(FileWriter fw = new FileWriter("Student.csv",true)){
+            String CSVline = String.format("%d,%s,%s,%s,%d,%d\n", 
+                student.studentId, student.studentName, student.major, student.level, student.age, recordId);
+            fw.write(CSVline);
+        }catch(Exception e){
+            e.printStackTrace();
         }
 
         return this;
