@@ -8,4 +8,104 @@ insert 321114982 Michael Scott Management RR 21 25
 search 321114982
 insert 211334532 Jim Brown Engineering FR 19
 search 211334532
+insert 400000001 Alice Johnson Biology FR 20 1001
+insert 400000002 Bob Smith Chemistry RR 22
+insert 400000003 Carol White Physics FR 19 1002
+insert 400000004 David Brown Math RR 23
+insert 400000005 Emily Clark English FR 21 1003
+insert 400000006 Frank Lewis History RR 18
+insert 400000007 Grace Hall Art FR 24 1004
+insert 400000008 Henry Young Music RR 20
+insert 400000009 Irene King ComputerScience FR 25 1005
+insert 400000010 Jack Lee Engineering RR 19
+insert 400000011 Karen Adams Medicine FR 22 1006
+insert 400000012 Larry Baker Law RR 21
+insert 400000013 Monica Carter Business FR 23 1007
+insert 400000014 Nathan Evans Architecture RR 18
+insert 400000015 Olivia Foster Psychology FR 20 1008
+insert 400000016 Paul Green Sociology RR 24
+insert 400000017 Quinn Harris Philosophy FR 19 1009
+insert 400000018 Rachel Hill Economics RR 25
+insert 400000019 Steve Jones PoliticalScience FR 21 1010
+insert 400000020 Tina Kelly Anthropology RR 22
+insert 400000021 Uma Lopez Literature FR 23 1011
+insert 400000022 Victor Martin Geography RR 18
+insert 400000023 Wendy Nelson Linguistics FR 24 1012
+insert 400000024 Xavier Ortiz Statistics RR 20
+insert 400000025 Yolanda Perez Journalism FR 25 1013
+insert 400000026 Zachary Reed Education RR 19
+insert 400000027 Amber Scott Nursing FR 22 1014
+insert 400000028 Brian Turner Marketing RR 21
+insert 400000029 Chloe Walker Finance FR 23 1015
+insert 400000030 Derek Young Accounting RR 18
+insert 400000031 Ella Zimmerman Astronomy FR 20 1016
+insert 400000032 Felix Allen Chemistry RR 24
+insert 400000033 Gina Brooks Physics FR 19 1017
+insert 400000034 Harold Campbell Math RR 25
+insert 400000035 Isla Davis English FR 21 1018
+insert 400000036 Jake Edwards History RR 22
+insert 400000037 Kelly Fisher Art FR 23 1019
+insert 400000038 Liam Garcia Music RR 18
+insert 400000039 Mia Harris ComputerScience FR 24 1020
+insert 400000040 Noah Ingram Engineering RR 20
+insert 400000041 Olivia Jenkins Medicine FR 25 1021
+insert 400000042 Peter Knight Law RR 19
+insert 400000043 Quinn Lee Business FR 22 1022
+insert 400000044 Ruby Moore Architecture RR 21
+insert 400000045 Sam Nelson Psychology FR 23 1023
+insert 400000046 Tara Owens Sociology RR 18
+insert 400000047 Uma Patel Philosophy FR 20 1024
+insert 400000048 Victor Quinn Economics RR 24
+insert 400000049 Wendy Roberts PoliticalScience FR 19 1025
+insert 400000050 Xavier Smith Anthropology RR 25
+insert 400000051 Yolanda Thomas Literature FR 21 1026
+insert 400000052 Zachary Underwood Geography RR 22
+insert 400000053 Amber Vincent Linguistics FR 23 1027
+insert 400000054 Brian White Statistics RR 18
+insert 400000055 Chloe Xu Journalism FR 24 1028
+insert 400000056 Derek Youngblood Education RR 20
+insert 400000057 Ella Zimmerman Nursing FR 25 1029
+insert 400000058 Felix Anderson Marketing RR 19
+insert 400000059 Gina Brown Finance FR 22 1030
+insert 400000060 Harold Carter Accounting RR 21
+insert 400000061 Isla Davis Astronomy FR 23 1031
+insert 400000062 Jake Evans Chemistry RR 18
+insert 400000063 Kelly Foster Physics FR 20 1032
+insert 400000064 Liam Green Math RR 24
+insert 400000065 Mia Harris English FR 19 1033
+insert 400000066 Noah Ingram History RR 25
+insert 400000067 Olivia Jenkins Art FR 21 1034
+insert 400000068 Peter King Music RR 22
+insert 400000069 Quinn Lee ComputerScience FR 23 1035
+insert 400000070 Ruby Martin Engineering RR 18
+insert 400000071 Sam Nelson Medicine FR 24 1036
+insert 400000072 Tara Owens Law RR 20
+insert 400000073 Uma Patel Business FR 25 1037
+insert 400000074 Victor Quinn Architecture RR 19
+insert 400000075 Wendy Roberts Psychology FR 22 1038
+insert 400000076 Xavier Smith Sociology RR 21
+insert 400000077 Yolanda Thomas Philosophy FR 23 1039
+insert 400000078 Zachary Underwood Economics RR 18
+insert 400000079 Amber Vincent PoliticalScience FR 24 1040
+insert 400000080 Brian White Anthropology RR 20
+insert 400000081 Chloe Xu Literature FR 25 1041
+insert 400000082 Derek Youngblood Geography RR 19
+insert 400000083 Ella Zimmerman Linguistics FR 22 1042
+insert 400000084 Felix Anderson Statistics RR 21
+insert 400000085 Gina Brown Journalism FR 23 1043
+insert 400000086 Harold Carter Education RR 18
+insert 400000087 Isla Davis Nursing FR 24 1044
+insert 400000088 Jake Evans Marketing RR 20
+insert 400000089 Kelly Foster Finance FR 25 1045
+insert 400000090 Liam Green Accounting RR 19
+insert 400000091 Mia Harris Astronomy FR 22 1046
+insert 400000092 Noah Ingram Chemistry RR 21
+insert 400000093 Olivia Jenkins Physics FR 23 1047
+insert 400000094 Peter King Math RR 18
+insert 400000095 Quinn Lee English FR 20 1048
+insert 400000096 Ruby Martin History RR 24
+insert 400000097 Sam Nelson Art FR 19 1049
+insert 400000098 Tara Owens Music RR 25
+insert 400000099 Uma Patel ComputerScience FR 21 1050
+insert 400000100 Victor Quinn Engineering RR 22
 print
