@@ -210,7 +210,12 @@ class BTree {
     }
 
 
-    //comment what this does?
+    /**
+     * This method traverses the B+Tree and collects all record IDs
+     * from the leaf nodes, returning them in a list.
+     *
+     * @return List of record IDs in the B+Tree.
+     */
     List<Long> print() {
 
         List<Long> listOfRecordID = new ArrayList<>();
