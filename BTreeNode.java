@@ -57,8 +57,25 @@ class BTreeNode {
     }
 
     void leftAlignKeyValuePairs(){
-        //TODO
         //Left Align all of the Key-Value Pairs in this leaf.
+        int j=0;
+        for(int i=0;i<this.keys.length;i++){
+
+            long[] keyStage = new long[this.keys.length];
+            long[] valueStage = new long[this.values.length];
+
+            if(!(this.keys[i]==0L)){
+                keyStage[j] = this.keys[i];
+                valueStage[j] = this.values[i];
+
+            }
+
+        for(int k=0;k<j;k++){
+            this.keys[k] = keyStage[k];
+            this.values[k] = values[k];
+        }
+            
+        }
     }
 
     // Constructor

@@ -1,6 +1,9 @@
+import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.ForkJoinTask;
 
 /**
  * B+Tree Structure
@@ -173,13 +176,7 @@ class BTree {
 
     //comment what this does?
     boolean delete(long studentId) {
-        /**
-         * TODO:
-         * Implement this function to delete in the B+Tree.
-         * Also, delete in student.csv after deleting in B+Tree, if it exists.
-         * Return true if the student is deleted successfully otherwise, return false.
-         */
-        
+ 
         BTreeNode foundNode = this.findLeaf(null,studentId);
         
         if(foundNode.equals(null)){
@@ -380,7 +377,7 @@ class BTree {
         return findLeaf(node.children[i], studentId);
     }
 
-    //TODO
+     //move the remaining keys, values to the merged node.
     private static void appendAllKeysToNode(BTreeNode outgoing,BTreeNode incoming){
         for(int i=0;i<outgoing.n-1;i++){
             incoming.keys[incoming.n+i] = outgoing.keys[i];
@@ -388,24 +385,72 @@ class BTree {
         }
     }
 
-    //TODO
+    //move the remaining keys, values to the merged node.
     private static void prependAllKeysToNode(BTreeNode outgoing,BTreeNode incoming){
+        //move all keys and values of outgoing onto the front of incoming
+        int stageSize=outgoing.n + incoming.n;
+        long[] keyStage = new long[stageSize];
+        long[] valueStage = new long[stageSize];
 
+        int i;
+        for(i = 0; i<outgoing.n ; i++){
+            keyStage[i] = outgoing.keys[i];
+            valueStage[i] = outgoing.values[i];
+        }
+        for(int j=0;j<incoming.n;i++){
+            keyStage[j+i] = incoming.keys[j];
+            valueStage[j+i] = outgoing.values[j];
+        }
+
+        for(int j=0;j<outgoing.n + incoming.n;j++){
+            incoming.keys[j] = keyStage[j];
+            incoming.values[j] = valueStage[j];
+        }
     }
 
-    //TODO
+    //move last key,Value in leftNode to beginning found node.
     private static void prependLastKeyToNode(BTreeNode outgoing,BTreeNode incoming){
-
+        for(int i=incoming.n;i>-1;i--){
+            incoming.keys[i] = incoming.keys[i-1];
+            incoming.values[i] = incoming.values[i-1];
+        }
+        incoming.keys[0] = outgoing.keys[outgoing.n-1];
+        incoming.values[0] = outgoing.values[outgoing.n-1];
     }
 
-    //TODO
+    //move first key,Value pair in right Node to found node.
     private static void appendFirstKeyToNode(BTreeNode outgoing,BTreeNode incoming){
-
+        incoming.keys[incoming.n] = outgoing.keys[0];
+        incoming.values[incoming.n] = outgoing.values[0];
     }
 
-    //TODO
+    //remove the student from the CSV
     private static void deleteStudentFromCSV(long studentID){
 
+        try(Scanner fileScanner = new Scanner(new File("Student.csv"))){
+            while(fileScanner.hasNextLine()){
+
+                String line = fileScanner.nextLine();
+                String[] tokens = line.split(",");
+
+                long readStudentID = 0;
+
+                if(tokens.length == 6){
+
+                    readStudentID = Long.parseLong(tokens[0]);
+                }
+                if(readStudentID == studentID){
+                    try(FileWriter fw = new FileWriter("Student.csv",false)){
+                       fw.write("");
+                  }catch(Exception e){
+                    e.printStackTrace();
+                     }
+                }
+            }
+        }catch (Exception e) {
+            System.out.println("Error reading Student.csv: " + e.getMessage());
+            return;
+        }
     }
 
 

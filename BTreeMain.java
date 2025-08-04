@@ -8,7 +8,6 @@ import java.util.Random;
 
 public class BTreeMain {
 
-    // TODO: change when implementing on Linux CSL Machines
     public static final String pathName = "input.txt";
 
     public static void main(String[] args) {
@@ -130,7 +129,6 @@ public class BTreeMain {
                     int age = Integer.parseInt(tokens[4]);
                     long recordID;
 
-                    //is this ever needed?
                     if(tokens[5].isEmpty()){
                         recordID = generateRandomID();
                     } else {
@@ -147,7 +145,7 @@ public class BTreeMain {
         }
         
         try(FileWriter fw = new FileWriter("Student.csv",false)){
-            fw.write("");
+            //write just one line
         }catch(Exception e){
             e.printStackTrace();
         }
