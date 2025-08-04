@@ -23,6 +23,8 @@ class BTree {
         this.t = t;
     }
 
+
+    //comment what this does
     long search(long studentId) {
         /**
          * DONE:
@@ -37,6 +39,7 @@ class BTree {
         return search(root, studentId);
     }
 
+    //comment what this does
     private long search(BTreeNode node, long studentId){
         int i = 0;
         while(i < node.n && studentId > node.keys[i]){
@@ -53,6 +56,7 @@ class BTree {
     }
 
 
+    //comment what this does
     BTree insert(Student student) {
                 /**
              * DONE:
@@ -88,6 +92,7 @@ class BTree {
         return this;
     }
 
+    //Comment what this does?
     private void insertNonFull(BTreeNode node, long key, long recordId) {
         int i = node.n - 1;
 
@@ -115,6 +120,7 @@ class BTree {
         }
     }
 
+    // Comment what this does?
     private void splitChild(BTreeNode parent, int index) {
         BTreeNode fullChild = parent.children[index];
         BTreeNode newChild = new BTreeNode(t, fullChild.leaf);
@@ -162,6 +168,7 @@ class BTree {
     }
 
 
+    //comment what this does?
     boolean delete(long studentId) {
         /**
          * TODO:
@@ -169,9 +176,41 @@ class BTree {
          * Also, delete in student.csv after deleting in B+Tree, if it exists.
          * Return true if the student is deleted successfully otherwise, return false.
          */
+        
+        BTreeNode foundNode = this.findLeaf(studentId);
+
+        if(foundNode.equals(null)){
+            return false;
+        } if(foundNode.keys.length>t){
+
+            //we can just remove the key and be okay!
+            int deletionIndex = foundNode.findIndexOfId(studentId);
+            foundNode.keys[deletionIndex] = (Long) null; // wtf?
+            foundNode.values[deletionIndex] = (Long) null;
+
+            // need to reconcile the list, and make sure we've "left-aligned"
+            // all of the key-value paris.
+            foundNode.leftAlignKeyValuePairs();
+        } else{
+            // need to merge or something else to delete this key.
+
+            // try borrow Left and Right
+
+            // if fail, try merge with left/right.
+
+            }
+
         return true;
     }
 
+    // find the node that a studentId belongs to, if it exists. Otherwise, return null.
+    BTreeNode findLeaf(long studentId) {
+
+        return null;
+    }
+
+
+    //comment what this does?
     List<Long> print() {
 
         List<Long> listOfRecordID = new ArrayList<>();

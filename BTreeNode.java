@@ -19,6 +19,7 @@ class BTreeNode {
     BTreeNode[] children;
     /**
      * number of key-value pairs in the B-tree
+     * MLB - based ont the code, this is the # of pairs in the node, not the whole tree.
      */
     int n;
     /**
@@ -30,6 +31,23 @@ class BTreeNode {
      * point to other next node when it is a leaf node. Otherwise null
      */
     BTreeNode next;
+
+    /*
+     * Given a BTreeNode and student record ID that exists in the node,
+     * return the index of that value. Otherwise, return .-1
+     */
+    int findIndexOfId(long studentID){
+        for(int i=0; i<this.values.length;i++){
+            if(this.values[i] == studentID){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    void leftAlignKeyValuePairs(){
+        //Left Align all of the Key-Value Pairs in this leaf.
+    }
 
     // Constructor
     BTreeNode(int t, boolean leaf) {

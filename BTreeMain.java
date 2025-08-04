@@ -38,6 +38,7 @@ public class BTreeMain {
         /** Start reading the operations now from input file*/
         try {
             while (scan.hasNextLine()) {
+                // why do we need a second scanner?
                 Scanner s2 = new Scanner(scan.nextLine());
 
                 while (s2.hasNext()) {
@@ -78,7 +79,6 @@ public class BTreeMain {
                                 System.out.println("Student deleted successfully.");
                             else
                                 System.out.println("Student deletion failed.");
-
                             break;
                         }
                         case "search": {
@@ -130,6 +130,7 @@ public class BTreeMain {
                     int age = Integer.parseInt(tokens[4]);
                     long recordID;
 
+                    //is this ever needed?
                     if(tokens[5].isEmpty()){
                         recordID = generateRandomID();
                     } else {
