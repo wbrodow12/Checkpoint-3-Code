@@ -28,9 +28,20 @@ class BTreeNode {
     boolean leaf;
 
     /**
-     * point to other next node when it is a leaf node. Otherwise null
+     * point to next node when it is a leaf node. null if not a leaf node or last leaf node.
      */
     BTreeNode next;
+
+    /**
+     * point to previous node when it is a leaf node. null if not a leaf node or first node.
+     */
+    BTreeNode previous;
+
+    /**
+     * point to the parent node of this node.
+     */
+    BTreeNode parent;
+
 
     /*
      * Given a BTreeNode and student record ID that exists in the node,
@@ -47,6 +58,24 @@ class BTreeNode {
 
     void leftAlignKeyValuePairs(){
         //Left Align all of the Key-Value Pairs in this leaf.
+        int j=0;
+        for(int i=0;i<this.keys.length;i++){
+
+            long[] keyStage = new long[this.keys.length];
+            long[] valueStage = new long[this.values.length];
+
+            if(!(this.keys[i]==0L)){
+                keyStage[j] = this.keys[i];
+                valueStage[j] = this.values[i];
+
+            }
+
+        for(int k=0;k<j;k++){
+            this.keys[k] = keyStage[k];
+            this.values[k] = values[k];
+        }
+            
+        }
     }
 
     // Constructor

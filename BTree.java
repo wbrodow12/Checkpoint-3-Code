@@ -1,6 +1,9 @@
+import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.ForkJoinTask;
 
 /**
  * B+Tree Structure
@@ -83,6 +86,7 @@ class BTree {
             if (root.n == 2 * t - 1) {
                 BTreeNode newRoot = new BTreeNode(t, false);
                 newRoot.children[0] = root;
+                root.parent = newRoot; // MLB Keep track of the parent for deletion.
                 splitChild(newRoot, 0);
                 root = newRoot;
             } 
@@ -158,6 +162,8 @@ class BTree {
 
             // Link leaf nodes
             newChild.next = fullChild.next;
+            newChild.previous = fullChild;
+
             fullChild.next = newChild;
 
             // Push key up to parent
@@ -193,44 +199,283 @@ class BTree {
 
     //comment what this does?
     boolean delete(long studentId) {
-        /**
-         * TODO:
-         * Implement this function to delete in the B+Tree.
-         * Also, delete in student.csv after deleting in B+Tree, if it exists.
-         * Return true if the student is deleted successfully otherwise, return false.
-         */
+ 
+        BTreeNode foundNode = this.findLeaf(null,studentId);
         
-        BTreeNode foundNode = this.findLeaf(studentId);
-
         if(foundNode.equals(null)){
             return false;
-        } if(foundNode.keys.length>t){
+        } 
 
+        int deletionIndex = foundNode.findIndexOfId(studentId);
+        boolean isDeletedFromTree=false;
+
+        if(foundNode.keys.length>t){
             //we can just remove the key and be okay!
-            int deletionIndex = foundNode.findIndexOfId(studentId);
-            foundNode.keys[deletionIndex] = (Long) null; // wtf?
-            foundNode.values[deletionIndex] = (Long) null;
+            foundNode.keys[deletionIndex] = 0L;
+            foundNode.values[deletionIndex] = 0L;
 
             // need to reconcile the list, and make sure we've "left-aligned"
             // all of the key-value paris.
             foundNode.leftAlignKeyValuePairs();
+            deleteStudentFromCSV(studentId);
+
         } else{
-            // need to merge or something else to delete this key.
-
             // try borrow Left and Right
+            BTreeNode leftNode = foundNode.previous;
+            
+            //borrow if possible!
+            if(leftNode.n>t && (leftNode.parent.equals(foundNode.parent))){
+                //move last key,Value in leftNode to beginning found node.
+                prependLastKeyToNode(leftNode,foundNode);
+                
+                //remove key from left node + other vars
+                leftNode.keys[leftNode.n-1] = 0L;
+                leftNode.values[leftNode.n-1] = 0L;
+                leftNode.n--;
+                
+                //change the pointer in the parent node to be the key from the new value
+                for(int i=0;i<foundNode.parent.n;i++){
+                    
+                    //fix key in parent node so it still works.
+                    if(foundNode.parent.children[i]==foundNode){
+                        
+                        foundNode.parent.keys[i-1]=foundNode.keys[0];
 
-            // if fail, try merge with left/right.
-
+                        deleteStudentFromCSV(studentId);
+                        return true;
+                    }
+                }
             }
 
-        return true;
-    }
+            BTreeNode rightNode = foundNode.next;
+
+            if(rightNode.n>t && (rightNode.parent.equals(foundNode.parent))){
+                //move first key,Value pair in right Node to found node.
+                appendFirstKeyToNode(rightNode,foundNode);
+                
+                //remove key from right node + other vars
+                rightNode.keys[0] = 0L;
+                rightNode.values[0] = 0L;
+                rightNode.n--;
+                
+                //make sure there's no zero values in the first entry.
+                rightNode.leftAlignKeyValuePairs();
+
+                
+                
+                //change the pointer in the parent node to be the key from the new value
+                for(int i=0;i<foundNode.parent.n;i++){
+                    
+                    //fix key in parent node so it still works.
+                    if(foundNode.parent.children[i]==foundNode){
+                        
+                        foundNode.parent.keys[i]=rightNode.keys[0];
+
+                        deleteStudentFromCSV(studentId);
+                        return true;
+                    }
+                }
+            }
+
+
+            // Merge if we can't borrow
+
+            if(!(leftNode.n>(t+1)) && (leftNode.parent.equals(foundNode.parent))){
+                
+                foundNode.keys[deletionIndex] = 0L;
+                foundNode.values[deletionIndex] = 0L;
+
+                //align all nodes in the found node so the prepend method works
+                foundNode.leftAlignKeyValuePairs();
+
+                //move the remaining keys, values to the merged node.
+                appendAllKeysToNode(foundNode, leftNode);
+                
+                //get rid of the old node, preserve referrential integrity.
+                leftNode.next = rightNode;
+
+                //remove one navigational node, now that we're merging a leaf
+                for(int i=0;i<foundNode.parent.n;i++){
+                    
+                    //fix key in parent node so it still works.
+                    if(foundNode.parent.children[i]==foundNode){
+                        
+                        //update the key to be the new min value in this node
+                        foundNode.parent.keys[i-1] = rightNode.keys[0];
+
+                        for(int j=i;j<foundNode.parent.n-1;j++){
+                            foundNode.parent.keys[j]=foundNode.parent.keys[j+1];
+                            j++;
+                        }
+
+                        //update children in parent to be aligned with deleted node
+
+                        for(int j=i;j<foundNode.parent.n;j++) {
+                            foundNode.parent.children[j] = foundNode.parent.children[j+1];
+                        }
+
+                        foundNode.parent.children[foundNode.parent.n] = null; 
+                        foundNode.parent.keys[foundNode.parent.n] = 0L;
+                        foundNode.parent.n--; 
+                        
+                        //"delete" the node that's now merged into another node.
+                        foundNode=null;
+
+                        deleteStudentFromCSV(studentId);
+                        return true;
+                    }
+                }
+            }
+
+            if(!(rightNode.n>(t+1)) && (rightNode.parent.equals(foundNode.parent))){
+
+                foundNode.keys[deletionIndex] = 0L;
+                foundNode.values[deletionIndex] = 0L;
+
+                //align all nodes in the found node so the prepend method works
+                foundNode.leftAlignKeyValuePairs();
+
+                //move the remaining keys, values to the merged node.
+                prependAllKeysToNode(foundNode, rightNode);
+                
+                //get rid of the old node, preserve referrential integrity.
+                leftNode.next = rightNode;
+
+                //remove one navigational node, now that we're merging a leaf
+                for(int i=0;i<foundNode.parent.n;i++){
+                    
+                    //fix key in parent node so it still works.
+                    if(foundNode.parent.children[i]==foundNode){
+                        
+                        //update the key to be the new min value in this node
+                        foundNode.parent.keys[i-1] = rightNode.keys[0];
+
+                        for(int j=i;j<foundNode.parent.n-1;j++){
+                            foundNode.parent.keys[j]=foundNode.parent.keys[j+1];
+                            j++;
+                        }
+
+                        //update children in parent to be aligned with deleted node
+
+                        for(int j=i;j<foundNode.parent.n;j++) {
+                            foundNode.parent.children[j] = foundNode.parent.children[j+1];
+                        }
+
+                        foundNode.parent.children[foundNode.parent.n] = null; 
+                        foundNode.parent.keys[foundNode.parent.n] = 0L;
+                        foundNode.parent.n--; 
+                        
+                        //"delete" the node that's now merged into another node.
+                        foundNode=null;
+
+                        deleteStudentFromCSV(studentId);
+                        return true;
+                        }
+                 }
+             }
+
+                //check if Navigational Node Keys need to be changed
+                return true;
+            }
+            //check navigational nodes
+            return true;
+        }
 
     // find the node that a studentId belongs to, if it exists. Otherwise, return null.
-    BTreeNode findLeaf(long studentId) {
-
-        return null;
+    BTreeNode findLeaf(BTreeNode node, long studentId) {
+        int i=0;
+       if(node.equals(null)){
+         node = root;
+       }
+        while(i < node.n && studentId > node.keys[i]){
+            i++;
+        }
+        if(node.leaf){
+            if(i < node.n && node.keys[i] == studentId){
+                return node;
+            }
+            System.out.println("Provided student ID to delete: " + studentId + " was not found in the table.");
+            return null;
+        }
+        return findLeaf(node.children[i], studentId);
     }
+
+     //move the remaining keys, values to the merged node.
+    private static void appendAllKeysToNode(BTreeNode outgoing,BTreeNode incoming){
+        for(int i=0;i<outgoing.n-1;i++){
+            incoming.keys[incoming.n+i] = outgoing.keys[i];
+            incoming.values[incoming.n+i] = outgoing.values[i];
+        }
+    }
+
+    //move the remaining keys, values to the merged node.
+    private static void prependAllKeysToNode(BTreeNode outgoing,BTreeNode incoming){
+        //move all keys and values of outgoing onto the front of incoming
+        int stageSize=outgoing.n + incoming.n;
+        long[] keyStage = new long[stageSize];
+        long[] valueStage = new long[stageSize];
+
+        int i;
+        for(i = 0; i<outgoing.n ; i++){
+            keyStage[i] = outgoing.keys[i];
+            valueStage[i] = outgoing.values[i];
+        }
+        for(int j=0;j<incoming.n;i++){
+            keyStage[j+i] = incoming.keys[j];
+            valueStage[j+i] = outgoing.values[j];
+        }
+
+        for(int j=0;j<outgoing.n + incoming.n;j++){
+            incoming.keys[j] = keyStage[j];
+            incoming.values[j] = valueStage[j];
+        }
+    }
+
+    //move last key,Value in leftNode to beginning found node.
+    private static void prependLastKeyToNode(BTreeNode outgoing,BTreeNode incoming){
+        for(int i=incoming.n;i>-1;i--){
+            incoming.keys[i] = incoming.keys[i-1];
+            incoming.values[i] = incoming.values[i-1];
+        }
+        incoming.keys[0] = outgoing.keys[outgoing.n-1];
+        incoming.values[0] = outgoing.values[outgoing.n-1];
+    }
+
+    //move first key,Value pair in right Node to found node.
+    private static void appendFirstKeyToNode(BTreeNode outgoing,BTreeNode incoming){
+        incoming.keys[incoming.n] = outgoing.keys[0];
+        incoming.values[incoming.n] = outgoing.values[0];
+    }
+
+    //remove the student from the CSV
+    private static void deleteStudentFromCSV(long studentID){
+
+        try(Scanner fileScanner = new Scanner(new File("Student.csv"))){
+            while(fileScanner.hasNextLine()){
+
+                String line = fileScanner.nextLine();
+                String[] tokens = line.split(",");
+
+                long readStudentID = 0;
+
+                if(tokens.length == 6){
+
+                    readStudentID = Long.parseLong(tokens[0]);
+                }
+                if(readStudentID == studentID){
+                    try(FileWriter fw = new FileWriter("Student.csv",false)){
+                       fw.write("");
+                  }catch(Exception e){
+                    e.printStackTrace();
+                     }
+                }
+            }
+        }catch (Exception e) {
+            System.out.println("Error reading Student.csv: " + e.getMessage());
+            return;
+        }
+    }
+
 
 
     /**
