@@ -24,14 +24,14 @@ class BTree {
     }
 
 
-    //comment what this does
+    /**     * Search for a studentId in the B+Tree.
+     * If found, return the recordID associated with that studentId.
+     * If not found, print a message and return -1.
+     *
+     * @param studentId The ID of the student to search for.
+     * @return The recordID if found, otherwise -1.
+     */ 
     long search(long studentId) {
-        /**
-         * DONE:
-         * Implement this function to search in the B+Tree.
-         * Return recordID for the given StudentID.
-         * Otherwise, print out a message that the given studentId has not been found in the table and return -1.
-         */
         if (root == null){
             System.out.println("The B+Tree is empty. No records to search.");
             return -1;
@@ -39,7 +39,13 @@ class BTree {
         return search(root, studentId);
     }
 
-    //comment what this does
+    /**Recursive function to search for a studentId in the B+Tree.
+     * It traverses the tree until it finds the leaf node containing the studentId.
+     *
+     * @param node The current node being searched.
+     * @param studentId The ID of the student to search for.
+     * @return The recordID if found, otherwise -1.
+     */
     private long search(BTreeNode node, long studentId){
         int i = 0;
         while(i < node.n && studentId > node.keys[i]){
@@ -56,13 +62,15 @@ class BTree {
     }
 
 
-    //comment what this does
+    /**Insert a student into the B+Tree.
+     * If the tree is empty, create a new root node.
+     * If the root is full, split it and create a new root.
+     * Insert the student in the appropriate leaf node.
+     *
+     * @param student The student to be inserted.
+     * @return The updated BTree instance.
+     */
     BTree insert(Student student) {
-                /**
-             * DONE:
-             * Implement this function to insert in the B+Tree.
-             * Also, insert in student.csv after inserting in B+Tree.
-             */
         long key = student.studentId;
         long recordId = student.recordId;
 
@@ -92,7 +100,15 @@ class BTree {
         return this;
     }
 
-    //Comment what this does?
+    /** Insert a key-value pair into a non-full node.
+     * If the node is a leaf, insert the key and recordId directly.
+     * If the node is not a leaf, find the appropriate child to insert into.
+     * If that child is full, split it before inserting.
+     *
+     * @param node The node to insert into.
+     * @param key The key to be inserted (studentId).
+     * @param recordId The record ID associated with the key.
+     */
     private void insertNonFull(BTreeNode node, long key, long recordId) {
         int i = node.n - 1;
 
@@ -120,7 +136,14 @@ class BTree {
         }
     }
 
-    // Comment what this does?
+    /** Split a full child node into two nodes.
+     * The middle key is pushed up to the parent node.
+     * If the child is a leaf, the new child will also be a leaf.
+     * If the child is not a leaf, the new child will have its own children.
+     *
+     * @param parent The parent node containing the full child.
+     * @param index The index of the full child in the parent's children array.
+     */
     private void splitChild(BTreeNode parent, int index) {
         BTreeNode fullChild = parent.children[index];
         BTreeNode newChild = new BTreeNode(t, fullChild.leaf);
