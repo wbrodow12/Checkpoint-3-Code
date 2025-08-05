@@ -3,7 +3,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.ForkJoinTask;
 
 /**
  * B+Tree Structure
@@ -184,7 +183,6 @@ class BTree {
         } 
 
         int deletionIndex = foundNode.findIndexOfId(studentId);
-        boolean isDeletedFromTree=false;
 
         if(foundNode.keys.length>t){
             //we can just remove the key and be okay!
@@ -361,7 +359,7 @@ class BTree {
     // find the node that a studentId belongs to, if it exists. Otherwise, return null.
     BTreeNode findLeaf(BTreeNode node, long studentId) {
         int i=0;
-       if(node.equals(null)){
+       if(node == null){
          node = root;
        }
         while(i < node.n && studentId > node.keys[i]){
