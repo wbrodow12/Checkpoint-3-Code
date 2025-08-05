@@ -196,7 +196,14 @@ class BTree {
     }
 
 
-    //comment what this does?
+    /** Split a full child node into two nodes.
+     * The middle key is pushed up to the parent node.
+     * If the child is a leaf, the new child will also be a leaf.
+     * If the child is not a leaf, the new child will have its own children.
+     *
+     * @param parent The parent node containing the full child.
+     * @param index The index of the full child in the parent's children array.
+     */
     boolean delete(long studentId) {
  
         BTreeNode foundNode = this.findLeaf(null,studentId);
