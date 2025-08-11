@@ -37,7 +37,7 @@ public class BTreeMain {
         /** Start reading the operations now from input file*/
         try {
             while (scan.hasNextLine()) {
-                // why do we need a second scanner?
+                
                 Scanner s2 = new Scanner(scan.nextLine());
 
                 while (s2.hasNext()) {
@@ -84,9 +84,9 @@ public class BTreeMain {
                             long studentId = Long.parseLong(s2.next());
                             long recordID = bTree.search(studentId);
                             if (recordID != -1)
-                                System.out.println("Student exists in the database at " + recordID);
+                                System.out.println("Student " + studentId + " exists in the database at " + recordID);
                             else
-                                System.out.println("Student does not exist.");
+                                System.out.println("Student " + studentId + " does not exist.");
                             break;
                         }
                         case "print": {

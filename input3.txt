@@ -1,5 +1,4 @@
 3
-print
 search 829988864
 delete 829988864
 search 829988864
@@ -6001,4 +6000,3 @@ search 501420027
 search 833038334
 insert 833038334 Test Student CS FR 20
 search 833038334
-print

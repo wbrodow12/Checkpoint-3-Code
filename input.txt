@@ -108,4 +108,8 @@ insert 400000097 Sam Nelson Art FR 19 1049
 insert 400000098 Tara Owens Music RR 25
 insert 400000099 Uma Patel ComputerScience FR 21 1050
 insert 400000100 Victor Quinn Engineering RR 22
+search 400000096
+search 400000037
+search 320874982
+search 715227185
 print

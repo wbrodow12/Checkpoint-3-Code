@@ -57,7 +57,7 @@ class BTree {
             if(i < node.n && node.keys[i] == studentId){
                 return node.values[i];
             }
-            System.out.println("Provided student ID: " + studentId + " was not found in the table.");
+            //System.out.println("Provided student ID: " + studentId + " was not found in the table.");
             return -1;
         }
 
@@ -66,8 +66,7 @@ class BTree {
         }else{
             return search(node.children[i], studentId);
         }
-         // this code is assuming that the leaf node holding the value will be at the left
-        // of the parent node. E.g. if we find the actual key as a navigational key, we'll take the child on the left side to find it.
+         // modified from original to look to the right leaf if we found an exact match. otherwise, it'll be in the left node.
     }
 
 
@@ -95,7 +94,6 @@ class BTree {
             if (root.n == 2 * t) { // MLB remove -1 so we use all key spaces available in Root
                 BTreeNode newRoot = new BTreeNode(t, false);
                 newRoot.children[0] = root;
-                root.parent = newRoot; // MLB Keep track of the parent for deletion.
                 splitChild(newRoot, 0);
                 root = newRoot;
             } 
@@ -160,6 +158,10 @@ class BTree {
     private void splitChild(BTreeNode parent, int index) {
         BTreeNode fullChild = parent.children[index];
         BTreeNode newChild = new BTreeNode(t, fullChild.leaf);
+
+        //MLB keep track of parents for deletion
+        fullChild.parent = parent;
+        newChild.parent = parent;
 
         if (fullChild.leaf) {
             for (int j = 0; j < t; j++) {
@@ -231,10 +233,11 @@ class BTree {
 
         int deletionIndex = foundNode.findIndexOfId(studentId);
 
-        if(foundNode.keys.length>t){
+        if(foundNode.n>t){
             //we can just remove the key and be okay!
             foundNode.keys[deletionIndex] = 0L;
             foundNode.values[deletionIndex] = 0L;
+            foundNode.n--;
 
             // need to reconcile the list, and make sure we've "left-aligned"
             // all of the key-value paris.
@@ -248,8 +251,13 @@ class BTree {
             //borrow if possible!
             if(leftNode.n>t && (leftNode.parent.equals(foundNode.parent))){
                 //move last key,Value in leftNode to beginning found node.
+                                //actually delete the node... MLB
+                foundNode.keys[deletionIndex] = 0L;
+                foundNode.values[deletionIndex] = 0L;
+                foundNode.n--;
+                foundNode.leftAlignKeyValuePairs();
+
                 prependLastKeyToNode(leftNode,foundNode);
-                
                 //remove key from left node + other vars
                 leftNode.keys[leftNode.n-1] = 0L;
                 leftNode.values[leftNode.n-1] = 0L;
@@ -272,6 +280,12 @@ class BTree {
             BTreeNode rightNode = foundNode.next;
 
             if(rightNode.n>t && (rightNode.parent.equals(foundNode.parent))){
+                //maybe try to actually delete the node...
+                foundNode.keys[deletionIndex] = 0L;
+                foundNode.values[deletionIndex] = 0L;
+                foundNode.n--;
+                foundNode.leftAlignKeyValuePairs();
+
                 //move first key,Value pair in right Node to found node.
                 appendFirstKeyToNode(rightNode,foundNode);
                 
@@ -283,8 +297,6 @@ class BTree {
                 //make sure there's no zero values in the first entry.
                 rightNode.leftAlignKeyValuePairs();
 
-                
-                
                 //change the pointer in the parent node to be the key from the new value
                 for(int i=0;i<foundNode.parent.n;i++){
                     
@@ -306,6 +318,7 @@ class BTree {
                 
                 foundNode.keys[deletionIndex] = 0L;
                 foundNode.values[deletionIndex] = 0L;
+                foundNode.n--;
 
                 //align all nodes in the found node so the prepend method works
                 foundNode.leftAlignKeyValuePairs();
@@ -317,18 +330,14 @@ class BTree {
                 leftNode.next = rightNode;
 
                 //remove one navigational node, now that we're merging a leaf
-                for(int i=0;i<foundNode.parent.n;i++){
+                for(int i=0;i<foundNode.parent.children.length;i++){
                     
                     //fix key in parent node so it still works.
                     if(foundNode.parent.children[i]==foundNode){
                         
-                        //update the key to be the new min value in this node
-                        foundNode.parent.keys[i-1] = rightNode.keys[0];
-
-                        for(int j=i;j<foundNode.parent.n-1;j++){
-                            foundNode.parent.keys[j]=foundNode.parent.keys[j+1];
-                            j++;
-                        }
+                        foundNode.parent.keys[i] = 0L; // remove the navigational key.
+                        foundNode.parent.n--;
+                        foundNode.parent.leftAlignKeyValuePairs(); // shift all of the keys down by 1.
 
                         //update children in parent to be aligned with deleted node
 
@@ -337,8 +346,11 @@ class BTree {
                         }
 
                         foundNode.parent.children[foundNode.parent.n] = null; 
-                        foundNode.parent.keys[foundNode.parent.n] = 0L;
                         foundNode.parent.n--; 
+
+                        for(int k=0; i<foundNode.parent.n; i++){
+                            foundNode.parent.keys[k]=foundNode.parent.children[k+1].keys[0]; // change the navigational value.
+                        }
                         
                         //"delete" the node that's now merged into another node.
                         foundNode=null;
@@ -353,6 +365,7 @@ class BTree {
 
                 foundNode.keys[deletionIndex] = 0L;
                 foundNode.values[deletionIndex] = 0L;
+                foundNode.n--;
 
                 //align all nodes in the found node so the prepend method works
                 foundNode.leftAlignKeyValuePairs();
@@ -364,28 +377,25 @@ class BTree {
                 leftNode.next = rightNode;
 
                 //remove one navigational node, now that we're merging a leaf
-                for(int i=0;i<foundNode.parent.n;i++){
+                for(int i=0;i<foundNode.parent.children.length;i++){
                     
-                    //fix key in parent node so it still works.
                     if(foundNode.parent.children[i]==foundNode){
                         
-                        //update the key to be the new min value in this node
-                        foundNode.parent.keys[i-1] = rightNode.keys[0];
-
-                        for(int j=i;j<foundNode.parent.n-1;j++){
-                            foundNode.parent.keys[j]=foundNode.parent.keys[j+1];
-                            j++;
-                        }
-
+                        foundNode.parent.keys[i] = 0L; // remove the navigational key.
+                        foundNode.parent.n--;
+                        foundNode.parent.leftAlignKeyValuePairs(); // shift all of the keys down by 1.
+                        
                         //update children in parent to be aligned with deleted node
-
-                        for(int j=i;j<foundNode.parent.n;j++) {
+                        for(int j=i;j<foundNode.parent.n+1;j++) { // n+1 = number of children.
                             foundNode.parent.children[j] = foundNode.parent.children[j+1];
                         }
 
-                        foundNode.parent.children[foundNode.parent.n] = null; 
-                        foundNode.parent.keys[foundNode.parent.n] = 0L;
+                        foundNode.parent.children[foundNode.parent.n] = null; //remove the extra trailing reference
                         foundNode.parent.n--; 
+
+                        for(int k=0; i<foundNode.parent.n; i++){
+                            foundNode.parent.keys[k]=foundNode.parent.children[k+1].keys[0]; // change the navigational value.
+                        }
                         
                         //"delete" the node that's now merged into another node.
                         foundNode=null;
@@ -414,7 +424,7 @@ class BTree {
         while(i < node.n && studentId > node.keys[i]){
             i++;
         }
-
+        
         if(node.leaf){
             if(i < node.n && node.keys[i] == studentId){
                 return node;
@@ -422,7 +432,11 @@ class BTree {
             System.out.println("Provided student ID to delete: " + studentId + " was not found in the table.");
             return null;
         }
-        return findLeaf(node.children[i], studentId);
+        if(node.keys[i] == studentId){
+            return findLeaf(node.children[i+1], studentId);
+        }else{
+            return findLeaf(node.children[i], studentId);
+        }
     }
 
      //move the remaining keys, values to the merged node.
@@ -431,12 +445,16 @@ class BTree {
             incoming.keys[incoming.n+i] = outgoing.keys[i];
             incoming.values[incoming.n+i] = outgoing.values[i];
         }
+        incoming.n+=outgoing.n;
     }
 
     //move the remaining keys, values to the merged node.
     private static void prependAllKeysToNode(BTreeNode outgoing,BTreeNode incoming){
         //move all keys and values of outgoing onto the front of incoming
-        int stageSize=outgoing.n + incoming.n;
+        //int stageSize=outgoing.n + incoming.n;
+        
+        int stageSize=(2*outgoing.t); // t will be the same, but it's not static so need an obj reference
+
         long[] keyStage = new long[stageSize];
         long[] valueStage = new long[stageSize];
 
@@ -445,36 +463,40 @@ class BTree {
             keyStage[i] = outgoing.keys[i];
             valueStage[i] = outgoing.values[i];
         }
-        for(int j=0;j<incoming.n;i++){
+        for(int j=0;j<incoming.n;j++){
             keyStage[j+i] = incoming.keys[j];
             valueStage[j+i] = outgoing.values[j];
         }
-
-        for(int j=0;j<outgoing.n + incoming.n;j++){
+        int j;
+        for(j=0;j<stageSize;j++){
             incoming.keys[j] = keyStage[j];
             incoming.values[j] = valueStage[j];
         }
+        incoming.n=j-1;
     }
 
     //move last key,Value in leftNode to beginning found node.
     private static void prependLastKeyToNode(BTreeNode outgoing,BTreeNode incoming){
-        for(int i=incoming.n;i>-1;i--){
+        for(int i=incoming.n;i>0;i--){
             incoming.keys[i] = incoming.keys[i-1];
             incoming.values[i] = incoming.values[i-1];
         }
         incoming.keys[0] = outgoing.keys[outgoing.n-1];
         incoming.values[0] = outgoing.values[outgoing.n-1];
+
+        incoming.n++;
     }
 
     //move first key,Value pair in right Node to found node.
     private static void appendFirstKeyToNode(BTreeNode outgoing,BTreeNode incoming){
         incoming.keys[incoming.n] = outgoing.keys[0];
         incoming.values[incoming.n] = outgoing.values[0];
+        incoming.n++;
     }
 
     //remove the student from the CSV
     private static void deleteStudentFromCSV(long studentID){
-
+        
         try(Scanner fileScanner = new Scanner(new File("Student.csv"))){
             while(fileScanner.hasNextLine()){
 
@@ -489,7 +511,7 @@ class BTree {
                 }
                 if(readStudentID == studentID){
                     try(FileWriter fw = new FileWriter("Student.csv",false)){
-                       fw.write("");
+                       // write this line as null
                   }catch(Exception e){
                     e.printStackTrace();
                      }
@@ -499,6 +521,7 @@ class BTree {
             System.out.println("Error reading Student.csv: " + e.getMessage());
             return;
         }
+             
     }
 
 

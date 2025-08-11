@@ -48,8 +48,8 @@ class BTreeNode {
      * return the index of that value. Otherwise, return .-1
      */
     int findIndexOfId(long studentID){
-        for(int i=0; i<this.values.length;i++){
-            if(this.values[i] == studentID){
+        for(int i=0; i<this.keys.length;i++){
+            if(this.keys[i] == studentID){
                 return i;
             }
         }
@@ -58,23 +58,25 @@ class BTreeNode {
 
     void leftAlignKeyValuePairs(){
         //Left Align all of the Key-Value Pairs in this leaf.
+        
+        long[] keyStage = new long[this.keys.length];
+        long[] valueStage = new long[this.values.length];
+
         int j=0;
         for(int i=0;i<this.keys.length;i++){
-
-            long[] keyStage = new long[this.keys.length];
-            long[] valueStage = new long[this.values.length];
-
             if(!(this.keys[i]==0L)){
                 keyStage[j] = this.keys[i];
                 valueStage[j] = this.values[i];
-
+                j++;
             }
+        }
+
+        this.keys = new long[keyStage.length];
+        this.values = new long[valueStage.length];
 
         for(int k=0;k<j;k++){
             this.keys[k] = keyStage[k];
-            this.values[k] = values[k];
-        }
-            
+            this.values[k] = valueStage[k];
         }
     }
 
