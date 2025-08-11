@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class BTreeMain {
 
-    public static final String pathName = "input.txt";
+    public static final String pathName = "input3.txt";
 
     public static void main(String[] args) {
 

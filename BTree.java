@@ -60,7 +60,14 @@ class BTree {
             System.out.println("Provided student ID: " + studentId + " was not found in the table.");
             return -1;
         }
-        return search(node.children[i], studentId);
+
+        if(node.keys[i] == studentId){
+            return search(node.children[i+1], studentId);
+        }else{
+            return search(node.children[i], studentId);
+        }
+         // this code is assuming that the leaf node holding the value will be at the left
+        // of the parent node. E.g. if we find the actual key as a navigational key, we'll take the child on the left side to find it.
     }
 
 
@@ -82,14 +89,16 @@ class BTree {
             root.values[0] = recordId;
             root.n = 1;
         } else {
-            if (root.n == 2 * t - 1) {
+            
+            insertNonFull(root, key, recordId);
+
+            if (root.n == 2 * t) { // MLB remove -1 so we use all key spaces available in Root
                 BTreeNode newRoot = new BTreeNode(t, false);
                 newRoot.children[0] = root;
                 root.parent = newRoot; // MLB Keep track of the parent for deletion.
                 splitChild(newRoot, 0);
                 root = newRoot;
             } 
-            insertNonFull(root, key, recordId);
         }
 
         try(FileWriter fw = new FileWriter("Student.csv",true)){
@@ -113,7 +122,7 @@ class BTree {
      * @param recordId The record ID associated with the key.
      */
     private void insertNonFull(BTreeNode node, long key, long recordId) {
-        int i = node.n - 1;
+        int i = node.n - 1; // index of the last entry in the node's key table
 
         if (node.leaf) {
             while (i >= 0 && key < node.keys[i]) {
@@ -128,8 +137,9 @@ class BTree {
             while (i >= 0 && key < node.keys[i]) {
                 i--;
             }
-            i++;
-            if (node.children[i].n == 2 * t - 1) {
+            i++; // move i from the last entry in the key table to the index of the largest value smaller than the one we're inserting
+
+            if (node.children[i].n == 2 * t) { // mlb remove -1 from this so we use all of the key spaces in a node.
                 splitChild(node, i);
                 if (key >= node.keys[i]) {
                     i++;
@@ -153,11 +163,14 @@ class BTree {
 
         if (fullChild.leaf) {
             for (int j = 0; j < t; j++) {
-                newChild.keys[j] = fullChild.keys[j + t - 1];
-                newChild.values[j] = fullChild.values[j + t - 1];
+                newChild.keys[j] = fullChild.keys[j + t];
+                fullChild.keys[j+t] = 0L;
+                newChild.values[j] = fullChild.values[j + t];
+                fullChild.values[j+t] = 0L;
             }
+
             newChild.n = t;
-            fullChild.n = t - 1;
+            fullChild.n = t; 
 
             // Link leaf nodes
             newChild.next = fullChild.next;
@@ -175,14 +188,18 @@ class BTree {
             parent.n++;
 
         } else {
-            for (int j = 0; j < t - 1; j++) {
+            // MLB - something in this operation is losing keys.
+
+            for (int j = 0; j < t ; j++) {
                 newChild.keys[j] = fullChild.keys[j + t];
+                fullChild.keys[j+t] = 0L;
             }
-            for (int j = 0; j < t; j++) {
+            for (int j = 0; j <= t; j++) { // make this less than or equal to. We need to copy t+1 children to the new child node(s)
                 newChild.children[j] = fullChild.children[j + t];
+                fullChild.children[j+t] = null; // MLB null copied children.
             }
-            newChild.n = t - 1;
-            fullChild.n = t - 1;
+            newChild.n = t;
+            fullChild.n = t;
 
             // Promote middle key
             for (int j = parent.n; j > index; j--) {
@@ -388,13 +405,16 @@ class BTree {
 
     // find the node that a studentId belongs to, if it exists. Otherwise, return null.
     BTreeNode findLeaf(BTreeNode node, long studentId) {
+
         int i=0;
-       if(node == null){
+        if(node == null){
          node = root;
-       }
+        }
+
         while(i < node.n && studentId > node.keys[i]){
             i++;
         }
+
         if(node.leaf){
             if(i < node.n && node.keys[i] == studentId){
                 return node;
